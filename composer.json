@@ -1,0 +1,17 @@
+{
+    "name": "shadhin/validator",
+    "description": "Simple form input validator",
+    "type": "library",
+    "authors": [
+        {
+            "name": "shadhin",
+            "email": "shadhinsarker9@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "app//"
+        }
+    }
+}
