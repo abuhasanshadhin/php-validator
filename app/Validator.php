@@ -5,46 +5,34 @@ namespace App;
 class Validator
 {
     private $data = [];
-
     private $passes = false;
-
     private $fails = false;
 
-    public function make(array $data, array $rules) 
+    public function make(array $data, array $rules)
     {
-        if (!count($data) || !count($rules)) return;
-
+        if (!count($data) || !count($rules)) return false;
         $this->data = $data;
-
         $errors = [];
 
         foreach ($rules as $inputName => $_rules) {
-
             $_rules = trim($_rules);
 
             if (!empty($_rules)) {
 
                 if (strpos($_rules, '|') !== false) {
-
                     $exploded = explode('|', $_rules);
 
                     foreach ($exploded as $rule) {
-
                         $rule = trim($rule);
 
                         if (strpos($rule, ':') !== false) {
-
                             list($_rule, $value) = explode(':', $rule);
-
                             $validate = $this->validate($inputName, $_rule, $value);
-                            
                         } else {
-
                             $validate = $this->validate($inputName, $rule);
                         }
 
                         if ($validate != false) {
-
                             $errors[$inputName][] = $validate;
                         }
                     }
@@ -52,18 +40,13 @@ class Validator
                 } else {
 
                     if (strpos($_rules, ':') !== false) {
-
                         list($_rule, $value) = explode(':', $_rules);
-
                         $validate = $this->validate($inputName, $_rule, $value);
-                        
                     } else {
-
                         $validate = $this->validate($inputName, $_rules);
                     }
 
                     if ($validate != false) {
-
                         $errors[$inputName] = $validate;
                     }
                 }
@@ -71,14 +54,11 @@ class Validator
         }
 
         if (count($errors)) {
-
             $this->fails = true;
-
             return $errors;
         }
-        
-        $this->passes = true;
 
+        $this->passes = true;
         return false;
     }
 
@@ -124,14 +104,13 @@ class Validator
                 $max = $this->checkMaximumLength($inputName, $value);
                 if ($max) $error = $max;
                 break;
-            
+
             default:
-                
+
                 break;
         }
 
         if (!empty($error)) return $error;
-
         return false;
     }
 
@@ -144,8 +123,7 @@ class Validator
         return false;
     }
 
-    private function checkMaximumLength($inputName, $value)
-    {
+    private function checkMaximumLength($inputName, $value) {
 
         if (strlen($this->data[$inputName]) > $value) {
             return "The {$this->modifyInputFieldName($inputName)} field value maximum {$value} character.";
@@ -183,14 +161,16 @@ class Validator
 
     private function checkUrl($inputName) {
 
-        if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $this->data[$inputName])) {
+        $regex = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
+        
+        if (!preg_match($regex, $this->data[$inputName])) {
             return "The {$this->modifyInputFieldName($inputName)} field value must be url.";
         }
 
         return false;
     }
 
-    private function modifyInputFieldName($name) 
+    private function modifyInputFieldName($name)
     {
         $name = str_replace('_', ' ', $name);
         $name = str_replace('-', ' ', $name);
