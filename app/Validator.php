@@ -56,6 +56,7 @@ class Validator
                         list($_rule, $value) = explode(':', $_rules);
 
                         $validate = $this->validate($inputName, $_rule, $value);
+                        
                     } else {
 
                         $validate = $this->validate($inputName, $_rules);
@@ -93,28 +94,40 @@ class Validator
     {
         $error = '';
 
-        if ('required' == $rule && $this->checkRequired($inputName)) {
-            $error = $this->checkRequired($inputName);
-        }
+        switch ($rule) {
+            case 'required':
+                $required = $this->checkRequired($inputName);
+                if ($required) $error = $required;
+                break;
 
-        if ('string' == $rule && $this->checkString($inputName)) {
-            $error = $this->checkString($inputName);
-        }
+            case 'string':
+                $string = $this->checkString($inputName);
+                if ($string) $error = $string;
+                break;
 
-        if ('email' == $rule && $this->checkEmail($inputName)) {
-            $error = $this->checkEmail($inputName);
-        }
+            case 'email':
+                $email = $this->checkEmail($inputName);
+                if ($email) $error = $email;
+                break;
 
-        if ('url' == $rule && $this->checkUrl($inputName)) {
-            $error = $this->checkUrl($inputName);
-        }
+            case 'url':
+                $url = $this->checkUrl($inputName);
+                if ($url) $error = $url;
+                break;
 
-        if ('min' == $rule && $value != null) {
-            $error = $this->checkMinimumLength($inputName, $value);
-        }
+            case 'min':
+                $min = $this->checkMinimumLength($inputName, $value);
+                if ($min) $error = $min;
+                break;
 
-        if ('max' == $rule && $value != null) {
-            $error = $this->checkMaximumLength($inputName, $value);
+            case 'max':
+                $max = $this->checkMaximumLength($inputName, $value);
+                if ($max) $error = $max;
+                break;
+            
+            default:
+                
+                break;
         }
 
         if (!empty($error)) return $error;
